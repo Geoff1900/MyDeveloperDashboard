@@ -8,7 +8,7 @@ trigger:
 
 pool:
   #vmImage: 'windows-latest'
-  vmImage: 'NortonSoft.FileReader2'
+  vmImage: NortonSoft.FileReader2
 
 variables:
   solution: '**/*.sln'
