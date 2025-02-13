@@ -39,7 +39,7 @@ steps:
   displayName: 'Publish .NET App'
   inputs:
     command: 'publish'
-    publishWebProjects: true
+    publishWebProjects: false
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-restore --no-build'
 
 #- task: NuGetToolInstaller@1
