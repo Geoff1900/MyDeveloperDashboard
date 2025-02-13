@@ -39,7 +39,7 @@ steps:
   displayName: 'Publish .NET App'
   inputs:
     command: 'publish'
-    publishWebProjects: false
+    publishWebProjects: true
 
 #- task: NuGetToolInstaller@1
 
