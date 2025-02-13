@@ -6,9 +6,9 @@
 trigger:
 - main
 
-pool:
+pool: MyAgentPool
   #vmImage: 'windows-latest'
-  vmImage: MyWinAzureDevOp
+  #vmImage: MyWinAzureDevOp
 
 variables:
   solution: '**/*.sln'
