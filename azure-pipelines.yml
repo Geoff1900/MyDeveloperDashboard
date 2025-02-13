@@ -34,7 +34,13 @@ steps:
     command: 'build'
     projects: '**/*/*.csproj'
     arguments: '--no-restore --configuration  $(buildConfiguration)'
-    
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish .NET App'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+
 #- task: NuGetToolInstaller@1
 
 #- task: NuGetCommand@2
