@@ -40,7 +40,7 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: true
-    arguments: '--no-restore'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-restore --no-build'
 
 #- task: NuGetToolInstaller@1
 
