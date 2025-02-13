@@ -22,12 +22,14 @@ steps:
 
 
 - task: DotNetCoreCLI@2
-  displayName: 'Build .NET App'
+  displayName: 'Restore .NET App'
   inputs:
-    command: 'build'
+    command: 'restore'
     projects: '**/*/*.csproj'
+    feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Build .NET App'
   inputs:
     command: 'build'
     projects: '**/*/*.csproj'
