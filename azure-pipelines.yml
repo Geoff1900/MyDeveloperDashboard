@@ -7,8 +7,8 @@ trigger:
 - main
 
 pool: 
-  name: MyAgentPool
-  #vmImage: 'windows-latest'
+  #name: MyAgentPool
+  vmImage: 'windows-latest'
   #vmImage: MyWinAzureDevOp
 
 variables:
