@@ -27,7 +27,7 @@ steps:
     command: 'restore'
     projects: '**/*/*.csproj'
     feedsToUse: 'select'
-    vstsFeed: '3067f014-1514-497a-bbb7-8d21ce447050/e069f932-61ff-4d1c-a062-eb61b1b3bed4'
+    vstsFeed: 'e0efefea-b3fd-4f74-b5b6-719256b231bd'
     includeNuGetOrg: false
 
 - task: DotNetCoreCLI@2
