@@ -51,6 +51,9 @@ stages:
         publishWebProjects: false
         arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-restore --no-build'
         zipAfterPublish: True
+        
+    - script: echo $(Build.ArtifactStagingDirectory)
+      displayName: 'Show Artifact Staging Directory Path'
 
 - stage: Deploy
   displayName: 'Deploy Stage'
