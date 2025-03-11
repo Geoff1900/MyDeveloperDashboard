@@ -16,33 +16,64 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build Job'
+    pool:
+      vmImage: 'windows-latest' # or specify your own agent pool name
+    steps:
+    - script: echo Hello, world!
+      displayName: 'Run a one-line script'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore .NET App'
+      inputs:
+        command: 'restore'
+        projects: '**/*/*.csproj'
+        feedsToUse: 'select'
+        vstsFeed: 'e0efefea-b3fd-4f74-b5b6-719256b231bd'
+        includeNuGetOrg: false
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build .NET App'
+      inputs:
+        command: 'build'
+        projects: '**/*/*.csproj'
+        arguments: '--no-restore --configuration $(buildConfiguration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish .NET App'
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-restore --no-build'
+        zipAfterPublish: True
+
+- stage: Deploy
+  displayName: 'Deploy Stage'
+  jobs:
+  - deployment: DeployToIIS
+    displayName: 'Deploy to IIS on Azure VM'
+    environment: 'MyIISDevEnvironment'  # Ensure this environment is defined in Azure DevOps for the target VM
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            displayName: 'Deploy to IIS on Azure VM'
+            inputs:
+              WebSiteName: 'myWebsite'  # Replace with your actual IIS website name
+              Package: '$(Build.ArtifactStagingDirectory)/*.zip'
+              TakeAppOfflineFlag: true
+              XmlTransformation: true
+              XmlVariableSubstitution: true
+              RemoveAdditionalFilesFlag: true
+              AdditionalArguments: ''
 
 
-- task: DotNetCoreCLI@2
-  displayName: 'Restore .NET App'
-  inputs:
-    command: 'restore'
-    projects: '**/*/*.csproj'
-    feedsToUse: 'select'
-    vstsFeed: 'e0efefea-b3fd-4f74-b5b6-719256b231bd'
-    includeNuGetOrg: false
-
-- task: DotNetCoreCLI@2
-  displayName: 'Build .NET App'
-  inputs:
-    command: 'build'
-    projects: '**/*/*.csproj'
-    arguments: '--no-restore --configuration  $(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Publish .NET App'
-  inputs:
-    command: 'publish'
-    publishWebProjects: false
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-restore --no-build'
 
 #- task: NuGetToolInstaller@1
 
