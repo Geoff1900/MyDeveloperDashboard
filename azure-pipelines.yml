@@ -52,6 +52,12 @@ stages:
         arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-restore --no-build'
         zipAfterPublish: True
         
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        pathToPublish: '$(Build.ArtifactStagingDirectory)'
+        artifactName: 'drop'  # This name will be used in the next stage   
+        
     - script: echo $(Build.ArtifactStagingDirectory)
       displayName: 'Show Artifact Staging Directory Path'
 
@@ -65,11 +71,16 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Artifact'
+            inputs:
+              artifactName: 'drop'
+              downloadPath: '$(Pipeline.Workspace)'  # Download location          
           - task: IISWebAppDeploymentOnMachineGroup@0
             displayName: 'Deploy to IIS on Azure VM'
             inputs:
               WebSiteName: 'myWebsite'  # Replace with your actual IIS website name
-              Package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
+              Package: '$(Pipeline.Workspace)/drop/*.zip'
               TakeAppOfflineFlag: true
               XmlTransformation: true
               XmlVariableSubstitution: true
