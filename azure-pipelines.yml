@@ -69,7 +69,7 @@ stages:
             displayName: 'Deploy to IIS on Azure VM'
             inputs:
               WebSiteName: 'myWebsite'  # Replace with your actual IIS website name
-              Package: '$(Build.ArtifactStagingDirectory)/*.zip'
+              Package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
               TakeAppOfflineFlag: true
               XmlTransformation: true
               XmlVariableSubstitution: true
