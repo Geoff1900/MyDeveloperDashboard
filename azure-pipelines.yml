@@ -91,7 +91,7 @@ stages:
               RemoveAdditionalFilesFlag: true
               EnableMSDeployAppOffline: true
               AdditionalArguments: '-verbose'
-              IISDeploymentType: 'MSDeploy'              
+              IISDeploymentType: 'IISWebsite'              
               #TakeAppOfflineFlag: true
               #XmlTransformation: true
               #XmlVariableSubstitution: true
