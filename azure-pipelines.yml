@@ -23,7 +23,8 @@ stages:
   - job: BuildJob
     displayName: 'Build Job'
     pool:
-      vmImage: 'windows-latest' # or specify your own agent pool name
+      name: MyAgentPool
+    #  vmImage: 'windows-latest' # or specify your own agent pool name
     steps:
     - script: echo Hello, world!
       displayName: 'Run a one-line script'
