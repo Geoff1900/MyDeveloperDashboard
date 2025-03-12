@@ -68,7 +68,9 @@ stages:
   jobs:
   - deployment: DeployToIIS
     displayName: 'Deploy to IIS on Azure VM'
-    environment: 'MyIISDevEnvironment'  # Ensure this environment is defined in Azure DevOps for the target VM
+    environment: 
+        name: MyIISDevEnvironment  # Ensure this environment is defined in Azure DevOps for the target VM
+        resourceType: VirtualMachine
     strategy:
       runOnce:
         deploy:
