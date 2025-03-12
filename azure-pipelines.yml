@@ -84,10 +84,10 @@ stages:
               WebSiteName: 'myWebsite'  # Replace with your actual IIS website name
               Package: '$(Pipeline.Workspace)/drop/*.zip'
               TakeAppOfflineFlag: true
-              XmlTransformation: true
-              XmlVariableSubstitution: true
-              RemoveAdditionalFilesFlag: true
-              AdditionalArguments: ''
+              #XmlTransformation: true
+              #XmlVariableSubstitution: true
+              #RemoveAdditionalFilesFlag: true
+              #AdditionalArguments: ''
 
 
 
