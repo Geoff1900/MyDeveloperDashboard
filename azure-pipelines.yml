@@ -1,0 +1,119 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+
+trigger:
+- main
+
+pool: 
+  name: MyAgentPool
+  #vmImage: 'windows-latest'
+  #vmImage: MyWinAzureDevOp
+
+variables:
+  #system.debug: true
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build Job'
+    pool:
+      name: MyAgentPool
+    #  vmImage: 'windows-latest' # or specify your own agent pool name
+    steps:
+    - script: echo Hello, world!
+      displayName: 'Run a one-line script'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore .NET App'
+      inputs:
+        command: 'restore'
+        projects: '**/*/*.csproj'
+        feedsToUse: 'select'
+        vstsFeed: 'e0efefea-b3fd-4f74-b5b6-719256b231bd'
+        includeNuGetOrg: false
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build .NET App'
+      inputs:
+        command: 'build'
+        projects: '**/*/*.csproj'
+        arguments: '--no-restore --configuration $(buildConfiguration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish .NET App'
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-restore --no-build'
+        zipAfterPublish: True
+        
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        pathToPublish: '$(Build.ArtifactStagingDirectory)'
+        artifactName: 'drop'  # This name will be used in the next stage   
+        
+    - script: echo $(Build.ArtifactStagingDirectory)
+      displayName: 'Show Artifact Staging Directory Path'
+
+- stage: Deploy
+  displayName: 'Deploy Stage'
+  jobs:
+  - deployment: DeployToIIS
+    displayName: 'Deploy to IIS on Azure VM'
+    environment: 
+        name: MyIISDevEnvironment  # Ensure this environment is defined in Azure DevOps for the target VM
+        resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download Artifact'
+            inputs:
+              artifactName: 'drop'
+              downloadPath: '$(Pipeline.Workspace)'  # Download location          
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            displayName: 'Deploy to IIS on Azure VM'
+            inputs:
+              WebSiteName: 'myWebsite'  # Replace with your actual IIS website name
+              Package: '$(Pipeline.Workspace)/drop/*.zip'
+              TakeAppOfflineFlag: true
+              XmlTransformation: true
+              XmlVariableSubstitution: true
+              RemoveAdditionalFilesFlag: true
+              EnableMSDeployAppOffline: true
+              AdditionalArguments: '-verbose'
+              IISDeploymentType: 'IISWebsite'              
+              #TakeAppOfflineFlag: true
+              #XmlTransformation: true
+              #XmlVariableSubstitution: true
+              #RemoveAdditionalFilesFlag: true
+              #AdditionalArguments: ''
+
+
+
+#- task: NuGetToolInstaller@1
+
+#- task: NuGetCommand@2
+#  inputs:
+#    restoreSolution: '$(solution)'
+
+#- task: VSBuild@1
+#  inputs:
+#    solution: '$(solution)'
+#    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+#    platform: '$(buildPlatform)'
+#    configuration: '$(buildConfiguration)'
+
+#- task: VSTest@2
+#  inputs:
+#    platform: '$(buildPlatform)'
+#    configuration: '$(buildConfiguration)'
