@@ -1,0 +1,13 @@
+# Ignore build artifacts
+**/bin/
+**/obj/
+**/out/
+publish/
+
+# Ignore Dockerfiles (if needed)
+Dockerfile*
+!Dockerfile  # Keep main Dockerfile if needed
+
+# Ignore markdown/docs
+**/*.md
+README.md
